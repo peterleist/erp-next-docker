@@ -1,0 +1,30 @@
+[mysqld]
+# Character Set - UTF8MB4 for international support
+character-set-client-handshake = FALSE
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+
+# InnoDB Settings
+innodb_file_format = Barracuda
+innodb_file_per_table = 1
+innodb_large_prefix = 1
+innodb_buffer_pool_size = 1G
+
+# Connection Settings
+max_connections = 200
+max_allowed_packet = 256M
+
+# Performance Settings
+query_cache_size = 0
+query_cache_type = 0
+
+# Binary Logging (for backups and replication)
+log_bin = /var/log/mysql/mysql-bin.log
+expire_logs_days = 7
+max_binlog_size = 100M
+
+[mysql]
+default-character-set = utf8mb4
+
+[client]
+default-character-set = utf8mb4
