@@ -59,6 +59,7 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
     volumes:
       - sites-data:/home/frappe/frappe-bench/sites
+      - apps-data:/home/frappe/frappe-bench/apps
       - ./init-site.sh:/home/frappe/init-site.sh:ro
     networks:
       - erpnext-network
@@ -75,8 +76,18 @@ services:
         condition: service_completed_successfully
     volumes:
       - sites-data:/home/frappe/frappe-bench/sites
+      - apps-data:/home/frappe/frappe-bench/apps
     networks:
       - erpnext-network
+    entrypoint:
+      - bash
+      - -c
+      - |
+        cd /home/frappe/frappe-bench
+        if [ -d apps/spektor_go ]; then
+          ./env/bin/pip install -q -e apps/spektor_go
+        fi
+        exec ./env/bin/gunicorn --chdir=/home/frappe/frappe-bench/sites --bind=0.0.0.0:8000 --threads=4 --workers=2 --worker-class=gthread --worker-tmp-dir=/dev/shm --timeout=120 --preload frappe.app:application
 
   # ERPNext Frontend/Nginx
   frontend:
@@ -96,6 +107,7 @@ services:
       CLIENT_MAX_BODY_SIZE: 50m
     volumes:
       - sites-data:/home/frappe/frappe-bench/sites
+      - apps-data:/home/frappe/frappe-bench/apps
     networks:
       - erpnext-network
     ports:
@@ -112,10 +124,20 @@ services:
         condition: service_completed_successfully
     volumes:
       - sites-data:/home/frappe/frappe-bench/sites
+      - apps-data:/home/frappe/frappe-bench/apps
     networks:
       - erpnext-network
     ports:
       - "${WEBSOCKET_PORT:-9000}:9000"
+    entrypoint:
+      - bash
+      - -c
+      - |
+        cd /home/frappe/frappe-bench
+        if [ -d apps/spektor_go ]; then
+          ./env/bin/pip install -q -e apps/spektor_go
+        fi
+        exec node apps/frappe/socketio.js
 
   # Queue workers
   queue-short:
@@ -126,13 +148,18 @@ services:
         condition: service_completed_successfully
     volumes:
       - sites-data:/home/frappe/frappe-bench/sites
+      - apps-data:/home/frappe/frappe-bench/apps
     networks:
       - erpnext-network
-    command:
-      - bench
-      - worker
-      - --queue
-      - short,default
+    entrypoint:
+      - bash
+      - -c
+      - |
+        cd /home/frappe/frappe-bench
+        if [ -d apps/spektor_go ]; then
+          ./env/bin/pip install -q -e apps/spektor_go
+        fi
+        exec bench worker --queue short,default
 
   queue-long:
     image: frappe/erpnext:v16
@@ -142,13 +169,18 @@ services:
         condition: service_completed_successfully
     volumes:
       - sites-data:/home/frappe/frappe-bench/sites
+      - apps-data:/home/frappe/frappe-bench/apps
     networks:
       - erpnext-network
-    command:
-      - bench
-      - worker
-      - --queue
-      - long,default,short
+    entrypoint:
+      - bash
+      - -c
+      - |
+        cd /home/frappe/frappe-bench
+        if [ -d apps/spektor_go ]; then
+          ./env/bin/pip install -q -e apps/spektor_go
+        fi
+        exec bench worker --queue long,default,short
 
   # Scheduler
   scheduler:
@@ -159,11 +191,18 @@ services:
         condition: service_completed_successfully
     volumes:
       - sites-data:/home/frappe/frappe-bench/sites
+      - apps-data:/home/frappe/frappe-bench/apps
     networks:
       - erpnext-network
-    command:
-      - bench
-      - schedule
+    entrypoint:
+      - bash
+      - -c
+      - |
+        cd /home/frappe/frappe-bench
+        if [ -d apps/spektor_go ]; then
+          ./env/bin/pip install -q -e apps/spektor_go
+        fi
+        exec bench schedule
 
 networks:
   erpnext-network:
@@ -174,3 +213,4 @@ volumes:
   redis-cache-data:
   redis-queue-data:
   sites-data:
+  apps-data:

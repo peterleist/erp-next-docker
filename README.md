@@ -19,6 +19,10 @@ https://medium.com/@ibrahim.ah888/step-by-step-guide-to-installing-erpnext-16-be
 - **Queue Workers**: Háttérfeladatok végrehajtása
 - **Scheduler**: Időzített feladatok
 
+**📦 Előre telepített alkalmazások:**
+- ERPNext
+- **Spektor Go** - CMMS & Service Management System
+
 ## Követelmények
 
 - Docker Engine 20.10+

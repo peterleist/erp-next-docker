@@ -2,6 +2,8 @@
 
 ## ERPNext v16.0.0-dev 🚀
 
+**📦 Tartalmazza:** ERPNext + Spektor Go (CMMS & Service Management)
+
 ## Telepítés 3 lépésben
 
 ### 1. Konfiguráció
